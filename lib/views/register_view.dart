@@ -1,0 +1,96 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/material.dart';
+import '../firebase_options.dart';
+
+class RegisterView extends StatefulWidget {
+  RegisterView({Key? key}) : super(key: key);
+
+  @override
+  State<RegisterView> createState() => _RegisterViewState();
+}
+
+class _RegisterViewState extends State<RegisterView> {
+  late final TextEditingController _email;
+  late final TextEditingController _password;
+
+  @override
+  void initState() {
+    _email = TextEditingController();
+    _password = TextEditingController();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _email.dispose();
+    _password.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Registro'),
+      ),
+      body: FutureBuilder(
+        future: Firebase.initializeApp(
+          options: DefaultFirebaseOptions.currentPlatform,
+        ),
+        builder: ((context, snapshot) {
+          switch (snapshot.connectionState) {
+            //Si la conexion esta bien cargo la pantalla
+            case ConnectionState.done:
+              return Column(
+                children: [
+                  TextField(
+                    controller: _email,
+                    keyboardType: TextInputType.emailAddress,
+                    decoration: const InputDecoration(
+                      hintText: 'Ingrese email',
+                    ),
+                  ),
+                  TextField(
+                    controller: _password,
+                    obscureText: true, //oculta los caracteres
+                    enableSuggestions:
+                        false, //no suguiere valores para este campo
+                    autocorrect: false, //no realiza correcciones
+                    decoration: const InputDecoration(
+                      hintText: 'Ingrese password',
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () async {
+                      final email = _email.text;
+                      final password = _password.text;
+                      try {
+                        final userCredential = await FirebaseAuth.instance
+                            .createUserWithEmailAndPassword(
+                                email: email, password: password);
+                        print(userCredential);
+                      } on FirebaseAuthException catch (e) {
+                        if (e.code == 'weak-password') {
+                          print('El password es debil.');
+                        } else if (e.code == 'email-already-in-use') {
+                          print('La cuenta ingresada ya existe.');
+                        } else if (e.code == 'invalid-email') {
+                          print('El email no es valido.');
+                        } else {
+                          print(e.code);
+                        }
+                      }
+                    },
+                    child: const Text('Registrar'),
+                  ),
+                ],
+              );
+            default:
+              return const Text('Cargando....');
+          }
+        }),
+      ),
+    );
+  }
+}
