@@ -5,6 +5,7 @@ import 'package:mynotes/views/login_view.dart';
 import 'package:mynotes/views/register_view.dart';
 import 'package:mynotes/views/verify_email_view.dart';
 import '../firebase_options.dart';
+import 'views/main_ui_view.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -45,14 +46,13 @@ class _HomeViewState extends State<HomeView> {
             final user = FirebaseAuth.instance.currentUser;
             if (user != null) {
               if (user.emailVerified) {
-                print('El email esta verificado.');
+                return const NotesView();
               } else {
                 return const VerifyEmailView();
               }
             } else {
               return const LoginView();
             }
-            return const Text('Done');
           default:
             return const CircularProgressIndicator();
         }
