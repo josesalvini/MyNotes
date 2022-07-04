@@ -1,6 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'dart:developer' as devtools show log;
 
 class NotesView extends StatefulWidget {
   const NotesView({Key? key}) : super(key: key);
@@ -22,12 +21,10 @@ class _NotesViewState extends State<NotesView> {
                 final result = await showLogOutDialog(context);
                 if (result) {
                   await FirebaseAuth.instance.signOut();
-                  await Future.delayed(const Duration(seconds: 1), () {
-                    Navigator.of(context)
-                        .pushNamedAndRemoveUntil('/login/', (_) => false);
-                  });
-                } else {
-                  return;
+                  //La propiedad mounted debe verificarse después de un espacio asíncrono.
+                  if (!mounted) return;
+                  Navigator.of(context)
+                      .pushNamedAndRemoveUntil('/login/', (_) => false);
                 }
             }
           }, itemBuilder: (context) {
