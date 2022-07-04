@@ -1,7 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:mynotes/views/login_view.dart';
 import 'package:mynotes/views/register_view.dart';
+import 'package:mynotes/views/verify_email_view.dart';
 import '../firebase_options.dart';
 
 void main() {
@@ -40,13 +42,17 @@ class _HomeViewState extends State<HomeView> {
         switch (snapshot.connectionState) {
           //Si la conexion esta bien cargo la pantalla
           case ConnectionState.done:
-            //final user = FirebaseAuth.instance.currentUser;
-            //if (user?.emailVerified ?? false) {
-            //return const Text('Home');
-            //} else {
-            // return const VerifyEmailView();
-            //}
-            return const LoginView();
+            final user = FirebaseAuth.instance.currentUser;
+            if (user != null) {
+              if (user.emailVerified) {
+                print('El email esta verificado.');
+              } else {
+                return const VerifyEmailView();
+              }
+            } else {
+              return const LoginView();
+            }
+            return const Text('Done');
           default:
             return const CircularProgressIndicator();
         }
