@@ -1,6 +1,7 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:mynotes/constants/routes.dart';
+import 'package:mynotes/enums/menu_action.dart';
+import 'package:mynotes/services/auth/auth_service.dart';
 
 class NotesView extends StatefulWidget {
   const NotesView({Key? key}) : super(key: key);
@@ -21,7 +22,7 @@ class _NotesViewState extends State<NotesView> {
               case MenuAction.logout:
                 final result = await showLogOutDialog(context);
                 if (result) {
-                  await FirebaseAuth.instance.signOut();
+                  await AuthService.firebase().logOut();
                   //La propiedad mounted debe verificarse después de un espacio asíncrono.
                   if (!mounted) return;
                   Navigator.of(context)
@@ -41,8 +42,6 @@ class _NotesViewState extends State<NotesView> {
     );
   }
 }
-
-enum MenuAction { logout }
 
 Future<bool> showLogOutDialog(BuildContext context) {
   return showDialog<bool>(
