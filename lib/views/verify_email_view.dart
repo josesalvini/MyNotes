@@ -19,7 +19,7 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
       body: Column(
         children: [
           const Text(
-              'Se envio un mail para verificar su correo, por favor verifique su badeja ce correo.'),
+              'Se envio un mail para verificar su correo, por favor verifique su correo.'),
           const Text(
               'Si no recibio ningun mail, presione el siguiente boton para enviar nuevamente un mail de confirmacion.'),
           TextButton(
