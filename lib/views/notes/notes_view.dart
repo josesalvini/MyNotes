@@ -3,6 +3,8 @@ import 'package:mynotes/constants/routes.dart';
 import 'package:mynotes/enums/menu_action.dart';
 import 'package:mynotes/services/auth/auth_service.dart';
 import 'package:mynotes/services/crud/notes_service.dart';
+import 'package:mynotes/utilities/dialogs/logout_dialog.dart';
+import 'package:mynotes/views/notes/notes_list_view.dart';
 
 class NotesView extends StatefulWidget {
   const NotesView({Key? key}) : super(key: key);
@@ -69,26 +71,13 @@ class _NotesViewState extends State<NotesView> {
                       case ConnectionState.active:
                         if (snapshot.hasData) {
                           final notesList = snapshot.data as List<DatabaseNote>;
-                          return ListView.builder(
-                            itemCount: notesList.length,
-                            itemBuilder: (context, index) {
-                              final textNote = notesList[index];
-                              final text2 = textNote.text;
-                              final idNote = textNote.id;
-                              print('Text note $text2 id $idNote');
-
-                              return ListTile(
-                                title: Text(
-                                  textNote.text,
-                                  maxLines: 1,
-                                  softWrap: true,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              );
-                            },
-                          );
+                          return NotesListView(
+                              notes: notesList,
+                              onDeleteNote: (note) async {
+                                await _notesService.deleteNote(id: note.id);
+                              });
                         } else {
-                          return const CircularProgressIndicator();
+                          return const Text('No hay notas para mostrar!!!');
                         }
                       default:
                         return const CircularProgressIndicator();
@@ -103,6 +92,7 @@ class _NotesViewState extends State<NotesView> {
   }
 }
 
+/*
 Future<bool> showLogOutDialog(BuildContext context) {
   return showDialog<bool>(
       context: context,
@@ -125,3 +115,4 @@ Future<bool> showLogOutDialog(BuildContext context) {
         );
       }).then((value) => value ?? false);
 }
+*/

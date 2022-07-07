@@ -11,9 +11,7 @@ import 'package:path/path.dart' show join;
 
 class NotesService {
   Database? _db;
-
   List<DatabaseNote> _notes = [];
-
   //PATRON SINGLETON
   static final NotesService _shared = NotesService._sharedInstance();
   NotesService._sharedInstance() {
@@ -275,13 +273,14 @@ class DatabaseUser {
   int get hashCode => id.hashCode;
 }
 
+@immutable
 class DatabaseNote {
   final int id;
   final int userId;
   final String text;
   final bool isSyncedWithCloud;
 
-  DatabaseNote({
+  const DatabaseNote({
     required this.id,
     required this.userId,
     required this.text,
