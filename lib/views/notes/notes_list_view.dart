@@ -23,13 +23,13 @@ class NotesListView extends StatelessWidget {
       itemBuilder: (context, index) {
         final note = notes.elementAt(index);
         final noteText = note.text;
-        final noteId = note.documentId;
+        //final noteId = note.documentId;
         return ListTile(
           onTap: () {
             onTap(note);
           },
           title: Text(
-            'Id: $noteId  Text: $noteText',
+            'Text: $noteText',
             maxLines: 1,
             softWrap: true,
             overflow: TextOverflow.ellipsis,
