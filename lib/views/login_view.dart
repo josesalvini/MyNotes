@@ -4,6 +4,7 @@ import 'package:mynotes/constants/routes.dart';
 import 'package:mynotes/services/auth/auth_exceptions.dart';
 import 'package:mynotes/services/auth/bloc/auth_bloc.dart';
 import 'package:mynotes/services/auth/bloc/auth_event.dart';
+import 'package:mynotes/services/auth/bloc/auth_state.dart';
 import 'package:mynotes/utilities/dialogs/error_dialog.dart';
 
 class LoginView extends StatefulWidget {
@@ -56,15 +57,27 @@ class _LoginViewState extends State<LoginView> {
                 hintText: 'Ingrese password',
               ),
             ),
-            TextButton(
-              onPressed: () async {
-                final email = _email.text;
-                final password = _password.text;
-                try {
+            BlocListener<AuthBloc, AuthState>(
+              listener: (context, state) async {
+                if (state is AuthStateLoggedOut) {
+                  if (state.exception is UserNotFoundAuthException ||
+                      state.exception is WorngPasswordAuthException) {
+                    await showErrorDialog(
+                        context, 'Credenciales incorrectas, verifique.');
+                  } else if (state.exception is GenericAuthException) {
+                    await showErrorDialog(context, 'Error autenticación.');
+                  }
+                }
+              },
+              child: TextButton(
+                onPressed: () async {
+                  final email = _email.text;
+                  final password = _password.text;
                   context.read<AuthBloc>().add(AuthEventLogIn(
                         email,
                         password,
                       ));
+                  //try {
                   // await AuthService.firebase().logIn(
                   //   email: email,
                   //   password: password,
@@ -80,24 +93,25 @@ class _LoginViewState extends State<LoginView> {
                   //   Navigator.of(context).pushNamedAndRemoveUntil(
                   //       verifyEmailRoute, (route) => false);
                   // }
-                } on UserNotFoundAuthException {
-                  await showErrorDialog(
-                    context,
-                    'El usuario no existe.',
-                  );
-                } on WorngPasswordAuthException {
-                  await showErrorDialog(
-                    context,
-                    'El password es incorrecto.',
-                  );
-                } on GenericAuthException {
-                  await showErrorDialog(
-                    context,
-                    'Error en la autenticación.',
-                  );
-                }
-              },
-              child: const Text('Ingresar'),
+                  // } on UserNotFoundAuthException {
+                  //   await showErrorDialog(
+                  //     context,
+                  //     'El usuario no existe.',
+                  //   );
+                  // } on WorngPasswordAuthException {
+                  //   await showErrorDialog(
+                  //     context,
+                  //     'El password es incorrecto.',
+                  //   );
+                  // } on GenericAuthException {
+                  //   await showErrorDialog(
+                  //     context,
+                  //     'Error en la autenticación.',
+                  //   );
+                  // }
+                },
+                child: const Text('Ingresar'),
+              ),
             ),
             TextButton(
                 onPressed: () {
