@@ -6,6 +6,7 @@ import 'package:mynotes/services/auth/bloc/auth_bloc.dart';
 import 'package:mynotes/services/auth/bloc/auth_event.dart';
 import 'package:mynotes/services/auth/bloc/auth_state.dart';
 import 'package:mynotes/utilities/dialogs/error_dialog.dart';
+import 'package:mynotes/utilities/dialogs/loading_dialog.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({Key? key}) : super(key: key);
@@ -17,6 +18,7 @@ class LoginView extends StatefulWidget {
 class _LoginViewState extends State<LoginView> {
   late final TextEditingController _email;
   late final TextEditingController _password;
+  CloseDialog? _closeDialogHandle;
 
   @override
   void initState() {
@@ -34,42 +36,54 @@ class _LoginViewState extends State<LoginView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Login'),
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            TextField(
-              controller: _email,
-              keyboardType: TextInputType.emailAddress,
-              decoration: const InputDecoration(
-                hintText: 'Ingrese email',
+    return BlocListener<AuthBloc, AuthState>(
+      listener: (context, state) async {
+        if (state is AuthStateLoggedOut) {
+          final closeDialog = _closeDialogHandle;
+
+          if (!state.isLoading && closeDialog != null) {
+            closeDialog();
+            _closeDialogHandle = null;
+          } else if (state.isLoading && closeDialog == null) {
+            _closeDialogHandle = showLoadingDialog(
+              context: context,
+              text: 'Cargando.....',
+            );
+          }
+
+          if (state.exception is UserNotFoundAuthException ||
+              state.exception is WorngPasswordAuthException) {
+            await showErrorDialog(
+                context, 'Credenciales incorrectas, verifique.');
+          } else if (state.exception is GenericAuthException) {
+            await showErrorDialog(context, 'Error autenticación.');
+          }
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Login'),
+        ),
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              TextField(
+                controller: _email,
+                keyboardType: TextInputType.emailAddress,
+                decoration: const InputDecoration(
+                  hintText: 'Ingrese email',
+                ),
               ),
-            ),
-            TextField(
-              controller: _password,
-              obscureText: true, //oculta los caracteres
-              enableSuggestions: false, //no suguiere valores para este campo
-              autocorrect: false, //no realiza correcciones
-              decoration: const InputDecoration(
-                hintText: 'Ingrese password',
+              TextField(
+                controller: _password,
+                obscureText: true, //oculta los caracteres
+                enableSuggestions: false, //no suguiere valores para este campo
+                autocorrect: false, //no realiza correcciones
+                decoration: const InputDecoration(
+                  hintText: 'Ingrese password',
+                ),
               ),
-            ),
-            BlocListener<AuthBloc, AuthState>(
-              listener: (context, state) async {
-                if (state is AuthStateLoggedOut) {
-                  if (state.exception is UserNotFoundAuthException ||
-                      state.exception is WorngPasswordAuthException) {
-                    await showErrorDialog(
-                        context, 'Credenciales incorrectas, verifique.');
-                  } else if (state.exception is GenericAuthException) {
-                    await showErrorDialog(context, 'Error autenticación.');
-                  }
-                }
-              },
-              child: TextButton(
+              TextButton(
                 onPressed: () async {
                   final email = _email.text;
                   final password = _password.text;
@@ -77,49 +91,18 @@ class _LoginViewState extends State<LoginView> {
                         email,
                         password,
                       ));
-                  //try {
-                  // await AuthService.firebase().logIn(
-                  //   email: email,
-                  //   password: password,
-                  // );
-                  // final user = AuthService.firebase().currentUser;
-                  // if (!mounted) return;
-                  // if (user?.isEmailVerified ?? false) {
-                  //   //Si el usuario verifico el email se redirecciona a la vista de notas
-                  //   Navigator.of(context)
-                  //       .pushNamedAndRemoveUntil(notesRoute, (route) => false);
-                  // } else {
-                  //   //Si el usuario no verifico el email se redirecciona a la vista de verificacion
-                  //   Navigator.of(context).pushNamedAndRemoveUntil(
-                  //       verifyEmailRoute, (route) => false);
-                  // }
-                  // } on UserNotFoundAuthException {
-                  //   await showErrorDialog(
-                  //     context,
-                  //     'El usuario no existe.',
-                  //   );
-                  // } on WorngPasswordAuthException {
-                  //   await showErrorDialog(
-                  //     context,
-                  //     'El password es incorrecto.',
-                  //   );
-                  // } on GenericAuthException {
-                  //   await showErrorDialog(
-                  //     context,
-                  //     'Error en la autenticación.',
-                  //   );
-                  // }
                 },
                 child: const Text('Ingresar'),
               ),
-            ),
-            TextButton(
-                onPressed: () {
-                  Navigator.of(context)
-                      .pushNamedAndRemoveUntil(registerRoute, (route) => false);
-                },
-                child: const Text('No esta registrado?, registrar aqui.'))
-          ],
+              TextButton(
+                  onPressed: () {
+                    context.read<AuthBloc>().add(
+                          const AuthEventShouldRegister(),
+                        );
+                  },
+                  child: const Text('No esta registrado?, registrar aqui.'))
+            ],
+          ),
         ),
       ),
     );
