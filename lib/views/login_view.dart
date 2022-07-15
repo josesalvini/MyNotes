@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mynotes/constants/routes.dart';
 import 'package:mynotes/services/auth/auth_exceptions.dart';
 import 'package:mynotes/services/auth/bloc/auth_bloc.dart';
 import 'package:mynotes/services/auth/bloc/auth_event.dart';
 import 'package:mynotes/services/auth/bloc/auth_state.dart';
 import 'package:mynotes/utilities/dialogs/error_dialog.dart';
-import 'package:mynotes/utilities/dialogs/loading_dialog.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({Key? key}) : super(key: key);
@@ -52,43 +50,58 @@ class _LoginViewState extends State<LoginView> {
           title: const Text('Login'),
         ),
         body: SingleChildScrollView(
-          child: Column(
-            children: [
-              TextField(
-                controller: _email,
-                keyboardType: TextInputType.emailAddress,
-                decoration: const InputDecoration(
-                  hintText: 'Ingrese email',
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              children: [
+                const Text(
+                    'Inicie sesión en su cuenta para interactuar y crear una nota.'),
+                TextField(
+                  controller: _email,
+                  keyboardType: TextInputType.emailAddress,
+                  decoration: const InputDecoration(
+                    hintText: 'Ingrese email',
+                  ),
                 ),
-              ),
-              TextField(
-                controller: _password,
-                obscureText: true, //oculta los caracteres
-                enableSuggestions: false, //no suguiere valores para este campo
-                autocorrect: false, //no realiza correcciones
-                decoration: const InputDecoration(
-                  hintText: 'Ingrese password',
+                TextField(
+                  controller: _password,
+                  obscureText: true, //oculta los caracteres
+                  enableSuggestions:
+                      false, //no suguiere valores para este campo
+                  autocorrect: false, //no realiza correcciones
+                  decoration: const InputDecoration(
+                    hintText: 'Ingrese password',
+                  ),
                 ),
-              ),
-              TextButton(
-                onPressed: () async {
-                  final email = _email.text;
-                  final password = _password.text;
-                  context.read<AuthBloc>().add(AuthEventLogIn(
-                        email,
-                        password,
-                      ));
-                },
-                child: const Text('Ingresar'),
-              ),
-              TextButton(
+                TextButton(
+                  onPressed: () async {
+                    final email = _email.text;
+                    final password = _password.text;
+                    context.read<AuthBloc>().add(AuthEventLogIn(
+                          email,
+                          password,
+                        ));
+                  },
+                  child: const Text('Ingresar'),
+                ),
+                TextButton(
+                  onPressed: () {
+                    context.read<AuthBloc>().add(
+                          const AuthEventForgotPassword(),
+                        );
+                  },
+                  child: const Text('Olvide mi constraseña, presione aqui.'),
+                ),
+                TextButton(
                   onPressed: () {
                     context.read<AuthBloc>().add(
                           const AuthEventShouldRegister(),
                         );
                   },
-                  child: const Text('No esta registrado?, registrar aqui.'))
-            ],
+                  child: const Text('No esta registrado?, registrar aqui.'),
+                ),
+              ],
+            ),
           ),
         ),
       ),

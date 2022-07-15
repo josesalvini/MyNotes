@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:mynotes/constants/routes.dart';
-import 'package:mynotes/services/auth/auth_service.dart';
 import 'package:mynotes/services/auth/bloc/auth_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mynotes/services/auth/bloc/auth_event.dart';
@@ -19,29 +17,32 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
       appBar: AppBar(
         title: const Text('Verificar email'),
       ),
-      body: Column(
-        children: [
-          const Text(
-              'Se envio un mail para verificar su correo, por favor verifique su correo.'),
-          const Text(
-              'Si no recibio ningun mail, presione el siguiente boton para enviar nuevamente un mail de confirmacion.'),
-          TextButton(
-            onPressed: () {
-              context.read<AuthBloc>().add(
-                    const AuthEventSendEmailVerification(),
-                  );
-            },
-            child: const Text('Enviar verificación de email'),
-          ),
-          TextButton(
-            onPressed: () {
-              context.read<AuthBloc>().add(
-                    const AuthEventLogOut(),
-                  );
-            },
-            child: const Text('Reiniciar'),
-          ),
-        ],
+      body: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          children: [
+            const Text(
+                'Se envio un mail para verificar su correo, por favor verifique su correo.'),
+            const Text(
+                'Si no recibio ningun mail, presione el siguiente boton para enviar nuevamente un mail de confirmacion.'),
+            TextButton(
+              onPressed: () {
+                context.read<AuthBloc>().add(
+                      const AuthEventSendEmailVerification(),
+                    );
+              },
+              child: const Text('Enviar verificación de email'),
+            ),
+            TextButton(
+              onPressed: () {
+                context.read<AuthBloc>().add(
+                      const AuthEventLogOut(),
+                    );
+              },
+              child: const Text('Reiniciar'),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -115,17 +115,20 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
             case ConnectionState.done:
               _setupTextControllerListener();
               return SingleChildScrollView(
-                child: Column(
-                  children: [
-                    TextField(
-                      controller: _textController,
-                      keyboardType: TextInputType.multiline,
-                      maxLines: null,
-                      decoration: const InputDecoration(
-                        hintText: 'Escriba aqui su nota ...',
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    children: [
+                      TextField(
+                        controller: _textController,
+                        keyboardType: TextInputType.multiline,
+                        maxLines: null,
+                        decoration: const InputDecoration(
+                          hintText: 'Escriba aqui su nota ...',
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               );
             default:
