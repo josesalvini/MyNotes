@@ -66,19 +66,20 @@ class _HomeViewState extends State<HomeView> {
         return const RegisterView();
       } else {
         return Scaffold(
+            appBar: AppBar(),
             body: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Center(
-            child: Column(
-              children: const [
-                CircularProgressIndicator(
-                  semanticsLabel: 'Progress indicator',
+              padding: const EdgeInsets.all(20.0),
+              child: Center(
+                child: Column(
+                  children: const [
+                    CircularProgressIndicator(
+                      semanticsLabel: 'Progress indicator',
+                    ),
+                    Text('Cargando...'),
+                  ],
                 ),
-                Text('Cargando...'),
-              ],
-            ),
-          ),
-        ));
+              ),
+            ));
       }
     }));
     // return FutureBuilder(
