@@ -66,13 +66,18 @@ class _HomeViewState extends State<HomeView> {
         return const RegisterView();
       } else {
         return Scaffold(
-            body: Column(
-          children: const [
-            CircularProgressIndicator(
-              semanticsLabel: 'Progress indicator',
+            body: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Center(
+            child: Column(
+              children: const [
+                CircularProgressIndicator(
+                  semanticsLabel: 'Progress indicator',
+                ),
+                Text('Cargando...'),
+              ],
             ),
-            Text('Cargando'),
-          ],
+          ),
         ));
       }
     }));
