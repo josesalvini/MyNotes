@@ -1,0 +1,5 @@
+#TOMAR CAPTURA DE PANTALLA DISPOSITIVO
+adb exec-out screencap -p > file1.png
+
+#GENERAR CLAVE
+keytool -genkey -v -keystore C:\RepositorioProyectos\Flutter\upload-keystore.jks -storetype JKS -keyalg RSA -keysize 2048 -validity 10000 -alias upload
