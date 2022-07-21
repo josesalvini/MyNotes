@@ -1,0 +1,12 @@
+{
+    "login": "Title version (En)",
+    "notes_title": "{count, plural, =0{You have no notes} =1{You have 1 note} other{You have {count} notes}}",
+    "@notes_title": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "3 notes"
+            }
+        }
+    }
+}
